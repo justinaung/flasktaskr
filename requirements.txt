@@ -4,6 +4,8 @@ click==6.7
 curtsies==0.2.11
 flake8==3.3.0
 Flask==0.12.1
+Flask-SQLAlchemy==2.2
+Flask-WTF==0.14.2
 greenlet==0.4.12
 itsdangerous==0.24
 Jinja2==2.9.6
@@ -14,5 +16,7 @@ pyflakes==1.5.0
 Pygments==2.2.0
 requests==2.14.2
 six==1.10.0
+SQLAlchemy==1.1.9
 wcwidth==0.1.7
 Werkzeug==0.12.1
+WTForms==2.1
