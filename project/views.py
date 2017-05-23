@@ -9,7 +9,7 @@ from flask import (flash,
 
 from forms import AddTaskForm
 from models import Task
-from _config import db
+from _config import db, app
 
 
 # helper functions
