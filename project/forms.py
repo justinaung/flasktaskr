@@ -8,7 +8,7 @@ class AddTaskForm(FlaskForm):
     name = StringField('Task Name', validators=[DataRequired()])
     due_date = DateField('Date Due (mm/dd/yyyy)',
                          validators=[DataRequired()],
-                         format='%m/%d/%y')
+                         format='%m/%d/%Y')
     priority = SelectField(
         'Priority',
         validators=[DataRequired()],
