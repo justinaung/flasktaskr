@@ -1,17 +1,26 @@
 from functools import wraps
 import datetime
 
-from flask import (flash,
+from flask import (Flask,
+                   flash,
                    redirect,
                    render_template,
                    request,
                    session,
                    url_for)
+from flask_wtf.csrf import CSRFProtect
 from sqlalchemy.exc import IntegrityError
+from flask_sqlalchemy import SQLAlchemy
 
 from forms import AddTaskForm, RegisterForm, LoginForm
+
+# config
+app = Flask(__name__)
+CSRFProtect(app)
+app.config.from_object('_config')
+db = SQLAlchemy(app)
+
 from models import Task, User
-from _config import db, app
 
 
 # helper functions
@@ -22,13 +31,14 @@ def login_required(test):
         if 'logged_in' in session:
             return test(*args, **kwargs)
         else:
-            flash('You need to login first')
+            return redirect(url_for('login'))
     return wrap
 
 
 # route handlers
 
 @app.route('/logout/')
+@login_required
 def logout():
     session.pop('logged_in', None)
     session.pop('user_id', None)

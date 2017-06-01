@@ -1,6 +1,6 @@
 import datetime
 
-from _config import db
+from views import db
 
 
 class Task(db.Model):
