@@ -42,6 +42,7 @@ def login_required(test):
 def logout():
     session.pop('logged_in', None)
     session.pop('user_id', None)
+    session.pop('role', None)
     flash('Goodbye!')
     return redirect(url_for('login'))
 
@@ -57,6 +58,7 @@ def login():
             if user is not None and user.password == form.password.data:
                 session['logged_in'] = True
                 session['user_id'] = user.id
+                session['role'] = user.role
                 flash('Welcome!')
                 return redirect(url_for('tasks'))
             else:
@@ -129,30 +131,42 @@ def new_task():
 @app.route('/complete/<int:task_id>/')
 @login_required
 def complete(task_id):
-    new_id = task_id
-    db.session.query(Task).filter_by(task_id=new_id).update({'status': 0})
-    db.session.commit()
-    flash('The task is complete. Nice.')
+    task = db.session.query(Task).filter_by(task_id=task_id)
+    is_task_owner = session['user_id'] == task.first().user_id
+    if is_task_owner or session['role'] == 'admin':
+        task.update({'status': 0})
+        db.session.commit()
+        flash('The task is complete. Nice.')
+    else:
+        flash('You can only update tasks that belong to you.')
     return redirect(url_for('tasks'))
 
 
 @app.route('/incomplete/<int:task_id>/')
 @login_required
 def incomplete(task_id):
-    new_id = task_id
-    db.session.query(Task).filter_by(task_id=new_id).update({'status': 1})
-    db.session.commit()
-    flash("What? You didn't finish it?")
+    task = db.session.query(Task).filter_by(task_id=task_id)
+    is_task_owner = session['user_id'] == task.first().user_id
+    if is_task_owner or session['role'] == 'admin':
+        task.update({'status': 1})
+        db.session.commit()
+        flash("What? You didn't finish it?")
+    else:
+        flash('You can only update tasks that belong to you.')
     return redirect(url_for('tasks'))
 
 
 @app.route('/delete/<int:task_id>/')
 @login_required
 def delete_entry(task_id):
-    new_id = task_id
-    db.session.query(Task).filter_by(task_id=new_id).delete()
-    db.session.commit()
-    flash('The task has been deleted.')
+    task = db.session.query(Task).filter_by(task_id=task_id)
+    is_task_owner = session['user_id'] == task.first().user_id
+    if is_task_owner or session['role'] == 'admin':
+        task.delete()
+        db.session.commit()
+        flash('The task has been deleted.')
+    else:
+        flash('You can only delete tasks that belong to you.')
     return redirect(url_for('tasks'))
 
 
