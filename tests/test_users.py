@@ -1,8 +1,8 @@
 import unittest
 
 from setup_test import SetupTests
-from models import User
-from views import db
+from project.models import User
+from project import db
 
 
 class UserTests(SetupTests):
