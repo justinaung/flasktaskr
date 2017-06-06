@@ -33,6 +33,7 @@ def flash_errors(form):
 def logout():
     session.pop('logged_in', None)
     session.pop('user_id', None)
+    session.pop('username', None)
     session.pop('role', None)
     flash('Goodbye!')
     return redirect(url_for('users.login'))
@@ -49,6 +50,7 @@ def login():
             if user is not None and user.password == form.password.data:
                 session['logged_in'] = True
                 session['user_id'] = user.id
+                session['username'] = user.name
                 session['role'] = user.role
                 flash('Welcome!')
                 return redirect(url_for('tasks.tasks'))

@@ -19,7 +19,7 @@
       {% endif %}
     </div>
     <div class="form-group">
-      {{ form.due_date(placeholder="due date") }}
+      {{ form.due_date(placeholder="due date (mm/dd/yyyy)") }}
       {% if form.due_date.errors %}
         <span class="error">
           {% for error in form.due_date.errors %}
@@ -67,8 +67,12 @@
           <td width="50px">{{ task.priority }}</td>
           <td width="90px">{{ task.poster.name }}</td>
           <td>
-            <a href="{{ url_for('tasks.delete_entry', task_id = task.task_id) }}">Delete</a>  -
-            <a href="{{ url_for('tasks.complete', task_id = task.task_id) }}">Mark as Complete</a>
+            {% if task.poster.name == session.username or session.role == "admin" %}
+             <a href="{{ url_for('tasks.delete_entry', task_id = task.task_id) }}">Delete</a> -
+             <a href="{{ url_for('tasks.incomplete', task_id = task.task_id) }}">Mark as incomplete</a>
+            {% else %}
+            <span>N/A</span>
+            {% endif %}
           </td>
         </tr>
       {% endfor %}
@@ -99,8 +103,12 @@
           <td width="50px">{{ task.priority }}</td>
           <td width="90px">{{ task.poster.name }}</td>
           <td>
+            {% if task.poster.name == session.username or session.role == "admin" %}
              <a href="{{ url_for('tasks.delete_entry', task_id = task.task_id) }}">Delete</a> -
              <a href="{{ url_for('tasks.incomplete', task_id = task.task_id) }}">Mark as incomplete</a>
+            {% else %}
+            <span>N/A</span>
+            {% endif %}
           </td>
         </tr>
       {% endfor %}
