@@ -1,7 +1,9 @@
 import os
 import unittest
+import datetime
+from functools import wraps
 
-from project import app, db
+from project import app, db, bcrypt
 from project._config import basedir
 from project.models import User
 
@@ -18,6 +20,7 @@ class SetupTests(unittest.TestCase):
                                                  os.path.join(basedir, TEST_DB))
         self.app = app.test_client()
         db.create_all()
+        print(datetime.datetime.today())
 
     @staticmethod
     def tearDown():
@@ -27,6 +30,14 @@ class SetupTests(unittest.TestCase):
     ##################
     # Helper methods #
     ##################
+    def bcrypted(func):
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            my_args = list(args)
+            my_args[3] = bcrypt.generate_password_hash(my_args[3])
+            return func(*my_args, **kwargs)
+        return wrapper
+
     def login(self, name, password):
         return self.app.post('/',
                              data=dict(name=name, password=password),
@@ -42,9 +53,9 @@ class SetupTests(unittest.TestCase):
     def logout(self):
         return self.app.get('logout/', follow_redirects=True)
 
-    @staticmethod
-    def create_user(name, email, password):
-        new_user = User(name=name, email=email, password=password)
+    @bcrypted
+    def create_user(self, name, email, password, role=None):
+        new_user = User(name, email, password, role)
         db.session.add(new_user)
         db.session.commit()
 
@@ -58,13 +69,8 @@ class SetupTests(unittest.TestCase):
             follow_redirects=True
         )
 
-    @staticmethod
-    def create_admin_user():
-        new_user = User(
-            name='Superman',
-            email='admin@realpython.com',
-            password='allpowerful',
-            role='admin'
-        )
-        db.session.add(new_user)
-        db.session.commit()
+    def create_admin_user(self):
+        self.create_user('Superman',
+                         'admin@realpython.com',
+                         'allpowerful',
+                         'admin')
