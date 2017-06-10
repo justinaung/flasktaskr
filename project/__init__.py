@@ -24,8 +24,7 @@ def not_found(error):
         r = request.url
         with open('error.log', 'a') as f:
             current_timestamp = now.strftime('%d-%m-%Y %H.%M:%S')
-            error_args = ', '.join(error.args)
-            f.write(f'\n404 error at {current_timestamp}: {r} [{error_args}]')
+            f.write(f'\n404 error at {current_timestamp}: {r}')
     return render_template('404.html'), 404
 
 
@@ -37,6 +36,5 @@ def internal_error(error):
         r = request.url
         with open('error.log', 'a') as f:
             current_timestamp = now.strftime('%d-%m-%Y %H.%M:%S')
-            error_args = ', '.join(error.args)
-            f.write(f'\n500 error at {current_timestamp}: {r} [{error_args}]')
+            f.write(f'\n500 error at {current_timestamp}: {r}')
     return render_template('500.html'), 500
