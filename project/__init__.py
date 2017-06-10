@@ -22,9 +22,9 @@ def not_found(error):
     if app.debug is False:
         now = datetime.datetime.now()
         r = request.url
-        with open('error.log', 'a') as f:
+        with open('error.log', 'a') as fl:
             current_timestamp = now.strftime('%d-%m-%Y %H.%M:%S')
-            f.write(f'\n404 error at {current_timestamp}: {r}')
+            fl.write(f'\n404 error at {current_timestamp}: {r}')
     return render_template('404.html'), 404
 
 
@@ -34,7 +34,7 @@ def internal_error(error):
     if app.debug is False:
         now = datetime.datetime.now()
         r = request.url
-        with open('error.log', 'a') as f:
+        with open('error.log', 'a') as fl:
             current_timestamp = now.strftime('%d-%m-%Y %H.%M:%S')
-            f.write(f'\n500 error at {current_timestamp}: {r}')
+            fl.write(f'\n500 error at {current_timestamp}: {r}')
     return render_template('500.html'), 500
