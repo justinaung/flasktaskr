@@ -1,6 +1,5 @@
 import os
 import unittest
-import datetime
 from functools import wraps
 
 from project import app, db, bcrypt
@@ -16,11 +15,12 @@ class SetupTests(unittest.TestCase):
     def setUp(self):
         app.config['TESTING'] = True
         app.config['WTF_CSRF_ENABLED'] = False
+        app.config['DEBUG'] = False
         app.config['SQLALCHEMY_DATABASE_URI'] = ('sqlite:////' +
                                                  os.path.join(basedir, TEST_DB))
         self.app = app.test_client()
         db.create_all()
-        print(datetime.datetime.today())
+        self.assertEqual(app.debug, False)
 
     @staticmethod
     def tearDown():

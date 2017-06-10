@@ -1,4 +1,6 @@
-from flask import Flask
+import datetime
+
+from flask import Flask, render_template, request
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 
@@ -13,3 +15,28 @@ from project.tasks.views import tasks_blueprint
 
 app.register_blueprint(users_blueprint)
 app.register_blueprint(tasks_blueprint)
+
+
+@app.errorhandler(404)
+def not_found(error):
+    if app.debug is False:
+        now = datetime.datetime.now()
+        r = request.url
+        with open('error.log', 'a') as f:
+            current_timestamp = now.strftime('%d-%m-%Y %H.%M:%S')
+            error_args = ', '.join(error.args)
+            f.write(f'\n404 error at {current_timestamp}: {r} [{error_args}]')
+    return render_template('404.html'), 404
+
+
+@app.errorhandler(500)
+def internal_error(error):
+    db.session.rollback()
+    if app.debug is False:
+        now = datetime.datetime.now()
+        r = request.url
+        with open('error.log', 'a') as f:
+            current_timestamp = now.strftime('%d-%m-%Y %H.%M:%S')
+            error_args = ', '.join(error.args)
+            f.write(f'\n500 error at {current_timestamp}: {r} [{error_args}]')
+    return render_template('500.html'), 500

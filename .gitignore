@@ -7,4 +7,5 @@ __pycache__
 project/_config.py
 project/htmlcov
 .coverage
+*.log
 
