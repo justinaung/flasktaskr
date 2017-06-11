@@ -1,13 +1,7 @@
-import os
 import unittest
-from functools import wraps
 
-from project import app, db, bcrypt
-from project._config import basedir
+from project import app, db
 from project.models import User
-
-
-TEST_DB = 'test.db'
 
 
 class SetupTests(unittest.TestCase):
@@ -16,8 +10,7 @@ class SetupTests(unittest.TestCase):
         app.config['TESTING'] = True
         app.config['WTF_CSRF_ENABLED'] = False
         app.config['DEBUG'] = False
-        app.config['SQLALCHEMY_DATABASE_URI'] = ('sqlite:////' +
-                                                 os.path.join(basedir, TEST_DB))
+        app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://localhost/test'
         self.app = app.test_client()
         db.create_all()
         self.assertEqual(app.debug, False)
@@ -30,14 +23,6 @@ class SetupTests(unittest.TestCase):
     ##################
     # Helper methods #
     ##################
-    def bcrypted(func):
-        @wraps(func)
-        def wrapper(*args, **kwargs):
-            my_args = list(args)
-            my_args[3] = bcrypt.generate_password_hash(my_args[3])
-            return func(*my_args, **kwargs)
-        return wrapper
-
     def login(self, name, password):
         return self.app.post('/',
                              data=dict(name=name, password=password),
@@ -53,7 +38,6 @@ class SetupTests(unittest.TestCase):
     def logout(self):
         return self.app.get('logout/', follow_redirects=True)
 
-    @bcrypted
     def create_user(self, name, email, password, role=None):
         new_user = User(name, email, password, role)
         db.session.add(new_user)

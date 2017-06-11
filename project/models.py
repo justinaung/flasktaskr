@@ -1,6 +1,8 @@
 import datetime
 
-from project import db
+from sqlalchemy.ext.hybrid import hybrid_property, hybrid_method
+
+from project import db, bcrypt
 
 
 class Task(db.Model):
@@ -34,7 +36,7 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, unique=True, nullable=False)
     email = db.Column(db.String, unique=True, nullable=False)
-    password = db.Column(db.String, nullable=False)
+    _password = db.Column(db.Binary(60), nullable=False)
     tasks = db.relationship('Task', backref='poster')
     role = db.Column(db.String, default='user')
 
@@ -43,6 +45,18 @@ class User(db.Model):
         self.email = email
         self.password = password
         self.role = role
+
+    @hybrid_property
+    def password(self):
+        return self._password
+
+    @password.setter
+    def set_password(self, plaintext_password):
+        self._password = bcrypt.generate_password_hash(plaintext_password)
+
+    @hybrid_method
+    def is_correct_password(self, plaintext_password):
+        return bcrypt.check_password_hash(self.password, plaintext_password)
 
     def __str__(self):
         return f'<User {self.name}>'
