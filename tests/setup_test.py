@@ -1,7 +1,12 @@
+import os
 import unittest
 
 from project import app, db
+from project._config import basedir
 from project.models import User
+
+
+TEST_DB = 'test.db'
 
 
 class SetupTests(unittest.TestCase):
@@ -10,7 +15,8 @@ class SetupTests(unittest.TestCase):
         app.config['TESTING'] = True
         app.config['WTF_CSRF_ENABLED'] = False
         app.config['DEBUG'] = False
-        app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://localhost/test'
+        app.config['SQLALCHEMY_DATABASE_URI'] = ('sqlite:////' +
+                                                 os.path.join(basedir, TEST_DB))
         self.app = app.test_client()
         db.create_all()
         self.assertEqual(app.debug, False)
