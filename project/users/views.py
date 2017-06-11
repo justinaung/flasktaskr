@@ -1,4 +1,3 @@
-from functools import wraps
 from flask import (flash, redirect, render_template, request, session,
                    url_for, Blueprint)
 from sqlalchemy.exc import IntegrityError
@@ -6,19 +5,10 @@ from sqlalchemy.exc import IntegrityError
 from .forms import RegisterForm, LoginForm
 from project import db
 from project.models import User
+from project.common.utils import login_required
 
 
 users_blueprint = Blueprint('users', __name__)
-
-
-def login_required(test):
-    @wraps(test)
-    def wrap(*args, **kwargs):
-        if 'logged_in' in session:
-            return test(*args, **kwargs)
-        else:
-            return redirect(url_for('users.login'))
-    return wrap
 
 
 def flash_errors(form):

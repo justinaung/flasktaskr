@@ -1,9 +1,10 @@
 import os
 import unittest
+from datetime import date
 
 from project import app, db
 from project._config import basedir
-from project.models import User
+from project.models import User, Task
 
 
 TEST_DB = 'test.db'
@@ -64,3 +65,28 @@ class SetupTests(unittest.TestCase):
                          'admin@realpython.com',
                          'allpowerful',
                          'admin')
+
+    def add_tasks(self):
+        db.session.add(
+            Task(
+                'Run around in circles',
+                date(2017, 10, 22),
+                10,
+                date.today(),
+                1,
+                1
+            )
+        )
+        db.session.commit()
+
+        db.session.add(
+            Task(
+                'Purchase Real Python',
+                date(2017, 11, 22),
+                10,
+                date.today(),
+                1,
+                1
+            )
+        )
+        db.session.commit()

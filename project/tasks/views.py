@@ -1,4 +1,3 @@
-from functools import wraps
 import datetime
 
 from flask import (flash, redirect, render_template, request, session, url_for,
@@ -7,50 +6,24 @@ from flask import (flash, redirect, render_template, request, session, url_for,
 from .forms import AddTaskForm
 from project import db
 from project.models import Task
+from project.common import utils
 
 
 tasks_blueprint = Blueprint('tasks', __name__)
 
 
-def login_required(test):
-    @wraps(test)
-    def wrap(*args, **kwargs):
-        if 'logged_in' in session:
-            return test(*args, **kwargs)
-        else:
-            return redirect(url_for('users.login'))
-    return wrap
-
-
-def open_tasks():
-    return db.session.query(Task).filter_by(
-        status=1).order_by(Task.due_date.asc())
-
-
-def closed_tasks():
-    return db.session.query(Task).filter_by(
-        status=0).order_by(Task.due_date.asc())
-
-
 @tasks_blueprint.route('/tasks/')
-@login_required
+@utils.login_required
 def tasks():
-    open_tasks = (db.session.query(Task)
-                  .filter_by(status=1)
-                  .order_by(Task.due_date.asc()))
-    closed_tasks = (db.session.query(Task)
-                    .filter_by(status=0)
-                    .order_by(Task.due_date.asc()))
-
     return render_template('tasks.html',
                            form=AddTaskForm(request.form),
-                           open_tasks=open_tasks,
-                           closed_tasks=closed_tasks,
+                           open_tasks=utils.open_tasks(),
+                           closed_tasks=utils.closed_tasks(),
                            username=session['username'])
 
 
 @tasks_blueprint.route('/add/', methods=['POST'])
-@login_required
+@utils.login_required
 def new_task():
     form = AddTaskForm(request.form)
     if form.validate_on_submit():
@@ -66,12 +39,12 @@ def new_task():
         return redirect(url_for('tasks.tasks'))
     return render_template('tasks.html',
                            form=form,
-                           open_tasks=open_tasks(),
-                           closed_tasks=closed_tasks())
+                           open_tasks=utils.open_tasks(),
+                           closed_tasks=utils.closed_tasks())
 
 
 @tasks_blueprint.route('/complete/<int:task_id>/')
-@login_required
+@utils.login_required
 def complete(task_id):
     task = db.session.query(Task).filter_by(task_id=task_id)
     is_task_owner = session['user_id'] == task.first().user_id
@@ -85,7 +58,7 @@ def complete(task_id):
 
 
 @tasks_blueprint.route('/incomplete/<int:task_id>/')
-@login_required
+@utils.login_required
 def incomplete(task_id):
     task = db.session.query(Task).filter_by(task_id=task_id)
     is_task_owner = session['user_id'] == task.first().user_id
@@ -99,7 +72,7 @@ def incomplete(task_id):
 
 
 @tasks_blueprint.route('/delete/<int:task_id>/')
-@login_required
+@utils.login_required
 def delete_entry(task_id):
     task = db.session.query(Task).filter_by(task_id=task_id)
     is_task_owner = session['user_id'] == task.first().user_id
