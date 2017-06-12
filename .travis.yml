@@ -1,11 +1,15 @@
 language:
-    - python
-
+- python
 python:
-    - "3.6"
-
+- '3.6'
 install:
-    - pip install -r requirements.txt
-
+- pip install -r requirements.txt
 script:
-    - nosetests
+- nosetests
+deploy:
+  provider: heroku
+  api_key:
+    secure: QHI+BL27EWT30b49YrNze+8gTN/BPiQnLhjK+tn1KC/0jffAdGSQIwNa7YWtCcxsj8cgA1N4S7CQS/MhUdIRb6jpJL03iJCOBwAvI8eFdcaoqAXBzn7dRIdDjrK9mcSkqCj8pc2YCQRwBPIWxuMqCW897Nqt1xQDh3uXhqYxaDXqHJEvguX+tWf3KIdTFffz4a+jqUYYLY6rWHVDwgaGj4GQ1Moqqby7cP/Ia80qTOHFCovI4EKjNyZKdB8UOZ5LKF99UbAb3acGbnNghENGNiQS933UzLMbQuXptfI5IJ9p6yDB+o9aLrnnJIJMXYxmRodox66dS2GGljgdg+QpdZIzP8k6p87kT1ekk/6XF7P3D7AUcb7Xc1YLFMDw7S8hX+L2W8u4KODDCjpKpNHUafPgvrhNEDhvXPnBy0AAeU9CKNTq/fixVrf5hR5BU+QXRtH0kdM9mp41Fxw3jj+oNrYUK8IasgTSXoqB1PBWkS4+NZcF5s0NcuDceS0zB+qTC+Jo9sEar2VvCwck5zn21Dw/4A+dKSwt7RKZEAVV9mrIyaKrsclX7vkE9MnmrwKuRQbekLoU22VWB5XnGZxpEuyY4dxQTnO4XKm5Q/VBNABDSfCrAn2QN7zbW5D5fEwKIQfKj3fvjUBUwL0qf0cXQ9+LPnKbNb3U1wjhrlMSngs=
+  app: infinite-depths-91164
+  on:
+    repo: justinaung/flasktaskr
