@@ -29,28 +29,28 @@ def logout():
     return redirect(url_for('users.login'))
 
 
-@users_blueprint.route('/', methods=['GET', 'POST'])
-def login():
-    form = LoginForm(request.form)
-    if request.method == 'POST':
-        if form.validate_on_submit():
-            user = User.query.filter_by(
-                name=form.name.data,
-            ).first()
-
-            if (user is not None and
-                    user.is_correct_password(form.password.data)):
-                session['logged_in'] = True
-                session['user_id'] = user.id
-                session['username'] = user.name
-                session['role'] = user.role
-                flash('Welcome!')
-                return redirect(url_for('tasks.tasks'))
-            else:
-                error = 'Invalid Credentials. Please try again.'
-                flash(error)
-    flash_errors(form)
-    return render_template('login.html', form=form)
+# @users_blueprint.route('/', methods=['GET', 'POST'])
+# def login():
+#     form = LoginForm(request.form)
+#     if request.method == 'POST':
+#         if form.validate_on_submit():
+#             user = User.query.filter_by(
+#                 name=form.name.data,
+#             ).first()
+#
+#             if (user is not None and
+#                     user.is_correct_password(form.password.data)):
+#                 session['logged_in'] = True
+#                 session['user_id'] = user.id
+#                 session['username'] = user.name
+#                 session['role'] = user.role
+#                 flash('Welcome!')
+#                 return redirect(url_for('tasks.tasks'))
+#             else:
+#                 error = 'Invalid Credentials. Please try again.'
+#                 flash(error)
+#     flash_errors(form)
+#     return render_template('login.html', form=form)
 
 
 @users_blueprint.route('/register/', methods=['GET', 'POST'])
