@@ -15,7 +15,9 @@ def commit():
 
 
 def push():
-    local('git push origin master')
+    local('git branch')
+    branch = input('Which branch do you want to push to? ')
+    local(f'git push origin {branch}')
 
 
 def prepare():
